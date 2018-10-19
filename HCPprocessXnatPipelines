@@ -34,12 +34,13 @@ From: centos:7.5.1804
 	mkdir -p /export/freesurfer_license
 	cd /pipeline_tools
 	
-	####	hcp_pipelines_run_utils v1.0.0
-	wget https://github.com/Washington-University/HCPpipelinesRunUtils/archive/v1.0.0.tar.gz -O hcp_pipelines_run_utils.tar.gz
+	####	hcp_pipelines_run_utils v1.1.0	################# NEEDS to CHANGE the REPOSITORY !!!!!!!!!!!!!!!
+	#wget https://github.com/Washington-University/HCPpipelinesRunUtils/archive/v1.1.0.tar.gz -O hcp_pipelines_run_utils.tar.gz
+	wget https://github.com/Washington-University/HCPpipelinesRunUtils/archive/master.tar.gz -O hcp_pipelines_run_utils.tar.gz
 	tar xvf hcp_pipelines_run_utils.tar.gz -C /pipeline_tools/HCPpipelinesRunUtils --strip-components=1
 	rm hcp_pipelines_run_utils.tar.gz
 	
-	####	xnat_pbs_jobs for singularity  #################  NEEDS to CHANGE the REPOSITORY !!!!!!!!!!!!!!!
+	####	xnat_pbs_jobs for singularity	#################  NEEDS to CHANGE the REPOSITORY !!!!!!!!!!!!!!!
 	#wget https://github.com/Washington-University/xnat_pbs_jobs/archive/v2.0.0.tar.gz -O xnat_pbs_jobs.tar.gz
 	wget https://github.com/Washington-University/HCPpipelinesRunUtils/archive/test_pipeline_xnat.tar.gz -O xnat_pbs_jobs.tar.gz
 	tar xvf xnat_pbs_jobs.tar.gz -C /pipeline_tools/xnat_pbs_jobs --strip-components=1
@@ -66,21 +67,22 @@ From: centos:7.5.1804
 	####	install freesurfer-6.0
 	wget ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/6.0.0/freesurfer-Linux-centos6_x86_64-stable-pub-v6.0.0.tar.gz
 	mkdir -p /export/freesurfer-6.0
-	tar -C /export/freesurfer-6.0 -xzvf freesurfer-Linux-centos6_x86_64-stable-pub-v6.0.0.tar.gz --strip-components=1
+	tar -C /export/freesurfer-6.0 -xzvf freesurfer-Linux-centos6_x86_64-stable-pub-v6.0.0.tar.gz --strip-components=1 \
+		--exclude='freesurfer/trctrain' \
+		--exclude='freesurfer/average/SVIP*' \
+		--exclude='freesurfer/average/*/*' \
+		--exclude='freesurfer/lib/qt' \
+		--exclude='freesurfer/subjects/bert' \
+		--exclude='freesurfer/subjects/cvs_avg35*' \
+		--exclude='freesurfer/subjects/sample-00*' \
+		--exclude='freesurfer/subjects/fsaverage?' \
+		--exclude='freesurfer/subjects/fsaverage_sym' \
+		--exclude='freesurfer/docs/*/*' \
+		--exclude='freesurfer/fsfast/docs/*' \
+		--exclude='freesurfer/mni/mni.srcbuild.June2015.tgz' \
+		--exclude='freesurfer/bin/*test*' \
+		--exclude='freesurfer/bin/*Test*'
 	rm freesurfer-Linux-centos6_x86_64-stable-pub-v6.0.0.tar.gz
-	rm -rf /export/freesurfer-6.0/trctrain/*
-	rm -rf /export/freesurfer-6.0/average/*/
-	rm -f /export/freesurfer-6.0/average/SVIP*
-	rm -rf /export/freesurfer-6.0/subjects/bert
-	rm -rf /export/freesurfer-6.0/subjects/cvs_avg35*
-	rm -f /export/freesurfer-6.0/subjects/sample-00*
-	rm -rf /export/freesurfer-6.0/subjects/fsaverage{3..6}
-	rm -rf /export/freesurfer-6.0/subjects/fsaverage_sym
-	rm -rf /export/freesurfer-6.0/docs/*/
-	rm -f /export/freesurfer-6.0/fsfast/docs/*
-	rm -f /export/freesurfer-6.0/mni/mni.srcbuild.June2015.tgz
-	rm -f /export/freesurfer-6.0/bin/*test*
-	rm -f /export/freesurfer-6.0/bin/*Test*
 
 	####	install epd-7.3.2
 	wget https://www.clear.rice.edu/comp140/downloads/epd/linux/epd-7.3-2-rh5-x86_64.sh
@@ -96,6 +98,9 @@ From: centos:7.5.1804
 	pip2 install numpy
 	pip2 install nibabel==2.3.0 --install-option="--prefix=/export/HCP/epd-7.3.2"
 	pip2 install requests==2.5.3 --install-option="--prefix=/export/HCP/epd-7.3.2"
+	
+	yum clean packages
+	rm -rf /var/cache/yum/* 
 	
 	#### 	gradunwarp v1.1.0
 	wget https://github.com/Washington-University/gradunwarp/archive/v1.1.0.tar.gz -O gradunwarp.tar.gz
@@ -121,10 +126,8 @@ From: centos:7.5.1804
 	
 	####	install MSM_HOCR_v2
 	wget https://www.doc.ic.ac.uk/~ecr05/MSM_HOCR_v2/MSM_HOCR_v2-download.tgz
-	tar -xvzf MSM_HOCR_v2-download.tgz --strip-components=2 -C /export/HCP
+	tar -xvzf MSM_HOCR_v2-download.tgz --strip-components=2 -C /export/HCP --exclude='MSM_HOCR_v2/MacOSX' --exclude='MSM_HOCR_v2/Ubuntu'
 	rm MSM_HOCR_v2-download.tgz
-	rm -rf /export/HCP/MSM_HOCR_v2/MacOSX
-	rm -rf /export/HCP/MSM_HOCR_v2/Ubuntu
 	
 	####	install MCR/R2012b/v80
 	wget http://ssd.mathworks.com/supportfiles/MCR_Runtime/R2012b/MCR_R2012b_glnxa64_installer.zip
@@ -136,16 +139,16 @@ From: centos:7.5.1804
 	ln -s /export/matlab/MCR/R2012b/v80 /export/freesurfer-6.0/MCRv80
 
 	####	install workbench
-	wget https://ftp.humanconnectome.org/workbench/workbench-rh_linux64-v1.3.1.zip
-	unzip workbench-rh_linux64-v1.3.1.zip -d /export/HCP/
-	rm workbench-rh_linux64-v1.3.1.zip
+	wget https://ftp.humanconnectome.org/workbench/workbench-rh_linux64-v1.3.2.zip
+	unzip workbench-rh_linux64-v1.3.2.zip -d /export/HCP/
+	rm workbench-rh_linux64-v1.3.2.zip
 	rm -f /export/HCP/workbench/plugins_rh_linux64/plugins.zip
 	
 	####	HCPpipelines
-	wget https://github.com/Washington-University/HCPpipelines/archive/feature/freesurfer_v6.tar.gz
+	wget https://github.com/Washington-University/HCPpipelines/archive/feature/freesurfer_v6_latest.tar.gz
 	mkdir -p /export/HCP/Pipelines
-	tar xvf freesurfer_v6.tar.gz -C /export/HCP/Pipelines --strip-components=1
-	rm freesurfer_v6.tar.gz
+	tar xvf freesurfer_v6_latest.tar.gz -C /export/HCP/Pipelines --strip-components=1
+	rm freesurfer_v6_latest.tar.gz
 	
 	ln -s /export/HCP/gradient_coefficient_files/3TPrisma_coeff_AS82_trunc.grad /export/HCP/Pipelines/global/config/3TPrisma_coeff_AS82_trunc.grad
 	ln -s /export/HCP/gradient_coefficient_files/coeff_SC72C_Skyra.grad /export/HCP/Pipelines/global/config/coeff_SC72C_Skyra.grad
@@ -157,11 +160,7 @@ From: centos:7.5.1804
 	####	recon-all.v6.hires
 	cp /export/HCP/Pipelines/FreeSurferCustomizations/recon-all.v6.hires /export/freesurfer-6.0/bin/recon-all.v6.hires
 	chmod 775 /export/freesurfer-6.0/bin/recon-all.v6.hires
-	
-	####	tess1mm
-	cp /export/HCP/Pipelines/FreeSurferCustomizations/tess1mm /export/freesurfer-6.0/bin/tess1mm
-	chmod 775 /export/freesurfer-6.0/bin/tess1mm
-		
+			
 %environment
 	export PATH=/opt/miniconda/bin:/usr/local/torque-6.1.2/bin:/usr/local/torque-6.1.2/sbin:${PATH}
 	source activate singlepython3
@@ -266,7 +265,7 @@ From: centos:7.5.1804
 	StructuralPreprocessing_singularity singularity PROCESS_DATA
 
 %apphelp StructuralPreprocessing_singularity
-    singularity run --app StructuralPreprocessing <Singularity_container.img> 
+    singularity run --app StructuralPreprocessing <Singularity_container.simg> 
 		--project=<project>		 : project (e.g. MR_TEST)   
 		--subject=<subject>		 : subject ID within project (e.g. HCD0102210)    
 		--session=<session>		 : session ID within project (e.g. HCD0102210_V1_MR)  
@@ -332,7 +331,7 @@ From: centos:7.5.1804
 	StructuralPreprocessingCheckData_singularity singularity CHECK_DATA
 
 %apphelp StructuralPreprocessingCheckData_singularity
-	singularity run --app StructuralPreprocessingCheckData <Singularity_container.img>
+	singularity run --app StructuralPreprocessingCheckData <Singularity_container.simg>
 		--project=<project>		 : project (e.g. MR_TEST)   
 		--subject=<subject>		 : subject ID within project (e.g. HCD0102210)   
 		--classifier=<classifier>: session classifier (e.g. 3T, 7T, MR, V1, V1_MR, etc.)   
@@ -344,14 +343,14 @@ From: centos:7.5.1804
 	FunctionalPreprocessing_singularity singularity PROCESS_DATA
 
 %apphelp FunctionalPreprocessing_singularity
-	singularity run --app FunctionalPreprocessing <Singularity_container.img>
+	singularity run --app FunctionalPreprocessing <Singularity_container.simg>
 		--project=<project>		 : project (e.g. MR_TEST)   
 		--subject=<subject>		 : subject ID within project (e.g. HCD0102210)   
 		--session=<session>		 : session ID within project (e.g. HCD0102210_V1_MR)   
 		--scan=<scan>			 : scan within subject (e.g. tfMRI_CARIT_PA, rfMRI_REST1_AP, etc)   
 		--session-classifier=<classifier>: session classifier (e.g. 3T, 7T, MR, V1, V1_MR, etc.)   
 		--dcmethod=<dcmethod>   	 : (e.g. TOPUP)  
-		--topupconfig=<topupconfig>      : (e.g. b02b0.cnf)
+		--topupconfig=<topupconfig>  : (e.g. b02b0.cnf)
 		--gdcoeffs=<gdcoeffs>		 : (e.g. Prisma_3T_coeff_AS82.grad)
 		--working-dir=<dir>	    	 : Working directory in which to place retrieved data and in which to produce results 
 	
@@ -361,7 +360,7 @@ From: centos:7.5.1804
 	FunctionalPreprocessingCheckData_singularity singularity CHECK_DATA
 
 %apphelp FunctionalPreprocessingCheckData_singularity
-	singularity run --app FunctionalPreprocessingCheckData <Singularity_container.img>
+	singularity run --app FunctionalPreprocessingCheckData <Singularity_container.simg>
 		--project=<project>		 : project (e.g. MR_TEST)   
 		--subject=<subject>		 : subject ID within project (e.g. HCD0102210)   
 		--classifier=<classifier>: session classifier (e.g. 3T, 7T, MR, V1, V1_MR, etc.)   
