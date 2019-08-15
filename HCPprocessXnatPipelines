@@ -2,44 +2,33 @@ Bootstrap: docker
 From: centos:7.6.1810
 
 %help
-	CentOS 7.6.1810 Singularity container for StructuralPreprocessing & FunctionalPreprocessing pipelines
-	
-	To see what Singularity Apps are available, type:
-
-		singularity apps HCPprocessXnatPipelines.simg
+	CentOS 7.6.1810 XNAT Singularity container for StructuralPreprocessing & FunctionalPreprocessing pipelines
 		
-	For more help on a particular App, type:
-	
-		singularity help --app <app-name> HCPprocessXnatPipelines.simg
-
-		where <app-name> is one of the available Apps in the container
-	
 %labels
-	Version v1.0
+	Version v1.1
 	Maintainer Connectome Coordination Facility
 
 %post
-	yum install -y wget tar.x86_64 gzip zip unzip git which bzip2 bc hostname java tcsh libgomp libGLU libXmu gcc qt5-qtbase mesa-dri-drivers mesa-libGL-devel
+	yum install -y wget tar gzip zip unzip git which bzip2 bc hostname java tcsh libgomp libGLU libXmu gcc qt5-qtbase mesa-dri-drivers mesa-libGL-devel
 	mkdir -p /pipeline_tools/xnat_pbs_jobs
-	mkdir -p /pipeline_tools/HCPpipelinesRunUtils	
-	mkdir -p /HCP/intradb/archive
-	mkdir -p /HCP/hcpdb/archive
-	mkdir -p /HCP/hcpdb/build_ssd
+	mkdir -p /pipeline_tools/HCPpipelinesRunUtils
+	mkdir -p /NRG-data/NRG/intradb/archive
+	mkdir -p /NRG-data/NRG/hcpdb/archive
+	mkdir -p /NRG-data/NRG/hcpdb/build_ssd
 	mkdir -p /usr/local/torque-6.1.2
-	
 	cd /pipeline_tools
 	
-	####	hcp_pipelines_run_utils v1.3.0
-	wget https://github.com/Washington-University/HCPpipelinesRunUtils/archive/v1.3.0.tar.gz -O hcp_pipelines_run_utils.tar.gz
+	####	hcp_pipelines_run_utils v1.4.1
+	wget https://github.com/Washington-University/HCPpipelinesRunUtils/archive/v1.4.1.tar.gz -O hcp_pipelines_run_utils.tar.gz
 	tar xvf hcp_pipelines_run_utils.tar.gz -C /pipeline_tools/HCPpipelinesRunUtils --strip-components=1
 	rm hcp_pipelines_run_utils.tar.gz
 	
-	####	HCPpipelinesXnatPbsUtils v1.0.0	
-	wget https://github.com/Washington-University/HCPpipelinesXnatPbsUtils/archive/master.tar.gz -O hcp_pipelines_xnat_pbs_utils.tar.gz
+	####	HCPpipelinesXnatPbsUtils v1.2.0	
+	wget https://github.com/Washington-University/HCPpipelinesXnatPbsUtils/archive/v1.2.0.tar.gz -O hcp_pipelines_xnat_pbs_utils.tar.gz
 	tar xvf hcp_pipelines_xnat_pbs_utils.tar.gz -C /pipeline_tools/xnat_pbs_jobs --strip-components=1
 	rm hcp_pipelines_xnat_pbs_utils.tar.gz
 
-	#### xnat_utilities for xnat singularity
+	####	xnat_utilities for xnat singularity
 	wget https://github.com/Washington-University/xnat_utilities/archive/v1.1.0.tar.gz -O xnat_utils.tar.gz
 	mkdir -p /export/HCP/xnat_utilities
 	tar xvf xnat_utils.tar.gz -C /export/HCP/xnat_utilities --strip-components=1
@@ -55,22 +44,12 @@ From: centos:7.6.1810
 	source activate singlepython3
 	conda install -y requests
 	conda install -y pyqt
-	cd
 
-	####	install epd-7.3.2
-	wget https://www.clear.rice.edu/comp140/downloads/epd/linux/epd-7.3-2-rh5-x86_64.sh
-	mkdir -p /export/HCP/epd-7.3.2
-	bash epd-7.3-2-rh5-x86_64.sh -b -p /export/HCP/epd-7.3.2
-	rm epd-7.3-2-rh5-x86_64.sh
-	rm -rf /export/HCP/epd-7.3.2/Examples/*
-	rm -rf /export/HCP/epd-7.3.2/Doc/*
-	
-	export PATH=/export/HCP/epd-7.3.2/bin:${PATH}
 	yum install -y epel-release
 	yum install -y python2-pip.noarch
-	pip2 install numpy
-	pip2 install nibabel==2.3.0 --install-option="--prefix=/export/HCP/epd-7.3.2"
-	pip2 install requests==2.5.3 --install-option="--prefix=/export/HCP/epd-7.3.2"
+	pip2 install --upgrade pip
+	pip2 install requests[security] 
+	pip2 install argparse 
 	
 	yum clean packages
 	rm -rf /var/cache/yum/* 
@@ -81,76 +60,7 @@ From: centos:7.6.1810
 	export QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb
 	export HCP_RUN_UTILS=/pipeline_tools/HCPpipelinesRunUtils
 	export XNAT_PBS_JOBS=/pipeline_tools/xnat_pbs_jobs
-	export EPD_PYTHON_HOME=/export/HCP/epd-7.3.2
-	export PATH=${EPD_PYTHON_HOME}/bin:${PATH}
 	export CLUSTER="2.0"
 	export PYTHONPATH=${HCP_RUN_UTILS}/lib:${XNAT_PBS_JOBS}/lib
 	export XNAT_PBS_JOBS_PIPELINE_ENGINE=${XNAT_PBS_JOBS}/WorkingDirPut
 	export XNAT_UTILS_HOME=/export/HCP/xnat_utilities
-		
-	
-%apprun SubmitStructuralPreprocessingJob
-	exec /pipeline_tools/xnat_pbs_jobs/StructuralPreprocessing/SubmitStructuralPreprocessingBatch "$@"
-%applabels SubmitStructuralPreprocessingJob
-	SubmitStructuralPreprocessingJob XNAT_RUN_JOBS
-			
-%apprun StructuralPreprocessingGetData
-	exec /pipeline_tools/xnat_pbs_jobs/StructuralPreprocessing/StructuralPreprocessing.XNAT_GET "$@"
-%applabels StructuralPreprocessingGetData
-	StructuralPreprocessingGetData XNAT_GET_DATA
-	
-%apprun StructuralPreprocessingControl
-	exec /pipeline_tools/xnat_pbs_jobs/StructuralPreprocessing/StructuralPreprocessingControl "$@"
-%applabels StructuralPreprocessingControl
-	StructuralPreprocessingControl XNAT_CONTROL	
-	
-%apprun StructuralPreprocessingMarkRunningStatus
-	exec /pipeline_tools/xnat_pbs_jobs/StructuralPreprocessing/StructuralPreprocessing.XNAT_MARK_RUNNING_STATUS "$@"
-%applabels StructuralPreprocessingMarkRunningStatus
-	StructuralPreprocessingMarkRunningStatus XNAT_MARK_RUNNING_STATUS
-	
-%apprun StructuralPreprocessing
-	exec /pipeline_tools/xnat_pbs_jobs/StructuralPreprocessing/StructuralPreprocessing.XNAT_PROCESS "$@"
-%applabels StructuralPreprocessing
-	StructuralPreprocessing XNAT_PROCESS_DATA	
-	
-%apprun StructuralPreprocessingCheckData
-	exec /pipeline_tools/xnat_pbs_jobs/StructuralPreprocessing/StructuralPreprocessing.XNAT_CHECK "$@"
-%applabels StructuralPreprocessingCheckData
-	StructuralPreprocessingCheckData XNAT_CHECK_DATA
-	
-%apprun PutData
-	exec /pipeline_tools/xnat_pbs_jobs/WorkingDirPut/XNAT_working_dir_put.sh "$@"
-%applabels PutData
-	PutData XNAT_PUT_DATA
-		
-%apprun SubmitFunctionalPreprocessingJob
-	exec /pipeline_tools/xnat_pbs_jobs/FunctionalPreprocessing/SubmitFunctionalPreprocessingBatch "$@"
-%applabels SubmitFunctionalPreprocessingJob
-	SubmitFunctionalPreprocessingJob XNAT_RUN_JOBS
-		
-%apprun FunctionalPreprocessingGetData
-	exec /pipeline_tools/xnat_pbs_jobs/FunctionalPreprocessing/FunctionalPreprocessing.XNAT_GET "$@"
-%applabels FunctionalPreprocessingGetData
-	FunctionalPreprocessingGetData XNAT_GET_DATA
-	
-%apprun FunctionalPreprocessingControl
-	exec /pipeline_tools/xnat_pbs_jobs/FunctionalPreprocessing/FunctionalPreprocessingControl "$@"
-%applabels FunctionalPreprocessingControl
-	FunctionalPreprocessingControl XNAT_CONTROL	
-	
-%apprun FunctionalPreprocessingMarkRunningStatus
-	exec /pipeline_tools/xnat_pbs_jobs/FunctionalPreprocessing/FunctionalPreprocessing.XNAT_MARK_RUNNING_STATUS "$@"
-%applabels FunctionalPreprocessingMarkRunningStatus
-	FunctionalPreprocessingMarkRunningStatus XNAT_MARK_RUNNING_STATUS
-	
-%apprun FunctionalPreprocessing
-	exec /pipeline_tools/xnat_pbs_jobs/FunctionalPreprocessing/FunctionalPreprocessing.XNAT_PROCESS "$@"
-%applabels FunctionalPreprocessing
-	FunctionalPreprocessing XNAT_PROCESS_DATA	
-	
-%apprun FunctionalPreprocessingCheckData
-	exec /pipeline_tools/xnat_pbs_jobs/FunctionalPreprocessing/FunctionalPreprocessing.XNAT_CHECK "$@"
-%applabels FunctionalPreprocessingCheckData
-	FunctionalPreprocessingCheckData XNAT_CHECK_DATA
-		
