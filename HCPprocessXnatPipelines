@@ -5,7 +5,7 @@ From: centos:7.6.1810
 	CentOS 7.6.1810 XNAT Singularity container for StructuralPreprocessing & FunctionalPreprocessing pipelines
 		
 %labels
-	Version v1.1
+	Version v1.2
 	Maintainer Connectome Coordination Facility
 
 %post
@@ -18,8 +18,8 @@ From: centos:7.6.1810
 	mkdir -p /usr/local/torque-6.1.2
 	cd /pipeline_tools
 	
-	####	hcp_pipelines_run_utils v1.4.1
-	wget https://github.com/Washington-University/HCPpipelinesRunUtils/archive/v1.4.1.tar.gz -O hcp_pipelines_run_utils.tar.gz
+	####	hcp_pipelines_run_utils v1.4.2
+	wget https://github.com/Washington-University/HCPpipelinesRunUtils/archive/v1.4.2.tar.gz -O hcp_pipelines_run_utils.tar.gz
 	tar xvf hcp_pipelines_run_utils.tar.gz -C /pipeline_tools/HCPpipelinesRunUtils --strip-components=1
 	rm hcp_pipelines_run_utils.tar.gz
 	
@@ -60,7 +60,6 @@ From: centos:7.6.1810
 	export QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb
 	export HCP_RUN_UTILS=/pipeline_tools/HCPpipelinesRunUtils
 	export XNAT_PBS_JOBS=/pipeline_tools/xnat_pbs_jobs
-	export CLUSTER="2.0"
 	export PYTHONPATH=${HCP_RUN_UTILS}/lib:${XNAT_PBS_JOBS}/lib
 	export XNAT_PBS_JOBS_PIPELINE_ENGINE=${XNAT_PBS_JOBS}/WorkingDirPut
 	export XNAT_UTILS_HOME=/export/HCP/xnat_utilities
