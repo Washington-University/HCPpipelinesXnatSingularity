@@ -23,8 +23,8 @@ From: centos:7.6.1810
 	tar xvf hcp_pipelines_run_utils.tar.gz -C /pipeline_tools/HCPpipelinesRunUtils --strip-components=1
 	rm hcp_pipelines_run_utils.tar.gz
 	
-	####	HCPpipelinesXnatPbsUtils v1.2.0	
-	wget https://github.com/Washington-University/HCPpipelinesXnatPbsUtils/archive/v1.2.0.tar.gz -O hcp_pipelines_xnat_pbs_utils.tar.gz
+	####	HCPpipelinesXnatPbsUtils v1.2.1
+	wget https://github.com/Washington-University/HCPpipelinesXnatPbsUtils/archive/v1.2.1.tar.gz -O hcp_pipelines_xnat_pbs_utils.tar.gz
 	tar xvf hcp_pipelines_xnat_pbs_utils.tar.gz -C /pipeline_tools/xnat_pbs_jobs --strip-components=1
 	rm hcp_pipelines_xnat_pbs_utils.tar.gz
 
