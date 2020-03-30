@@ -18,13 +18,13 @@ From: centos:7.6.1810
 	mkdir -p /usr/local/torque-6.1.2
 	cd /pipeline_tools
 	
-	####	hcp_pipelines_run_utils v1.4.5
-	wget https://github.com/Washington-University/HCPpipelinesRunUtils/archive/v1.4.5.tar.gz -O hcp_pipelines_run_utils.tar.gz
+	####	hcp_pipelines_run_utils v1.4.6
+	wget https://github.com/Washington-University/HCPpipelinesRunUtils/archive/v1.4.6.tar.gz -O hcp_pipelines_run_utils.tar.gz
 	tar xvf hcp_pipelines_run_utils.tar.gz -C /pipeline_tools/HCPpipelinesRunUtils --strip-components=1
 	rm hcp_pipelines_run_utils.tar.gz
 	
-	####	HCPpipelinesXnatPbsUtils v1.3.4
-	wget https://github.com/Washington-University/HCPpipelinesXnatPbsUtils/archive/v1.3.4.tar.gz -O hcp_pipelines_xnat_pbs_utils.tar.gz
+	####	HCPpipelinesXnatPbsUtils v1.3.5
+	wget https://github.com/Washington-University/HCPpipelinesXnatPbsUtils/archive/v1.3.5.tar.gz -O hcp_pipelines_xnat_pbs_utils.tar.gz
 	tar xvf hcp_pipelines_xnat_pbs_utils.tar.gz -C /pipeline_tools/xnat_pbs_jobs --strip-components=1
 	rm hcp_pipelines_xnat_pbs_utils.tar.gz
 
